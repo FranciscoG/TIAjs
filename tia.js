@@ -16,9 +16,12 @@ cv.style.backgroundColor = "#000";
 var ctx = cv.getContext("2d");
 ctx.fillStyle = "#000";
 
+const fps = 60;
+
+var WSYNC = 0;
 var scanline = [];
 var verticals = [];
-var callstack = [];
+var callstack = ['WSYNC', 'WSYNC', 'WSYNC','WSYNC','WSYNC','WSYNC','WSYNC','WSYNC','WSYNC','WSYNC','WSYNC'];
 
 function resetScanline() {
   for (var i=0;i<160;i++) {
@@ -69,38 +72,53 @@ function popStack() {
   }
 }
 
+function onePixel(pix, x, y) {
+  if (WSYNC === 1 && x !== 0) {
+    return; // do nothing until X = 0
+  } else {
+    WSYNC = 0;
+  }
 
-var fps = 60;
-var WSYNC = 0;
-function frame() {
+  if (pix === 1) {
+    // before draw we should check register for data
+    drawPixel(x, y, '696969');
+  }
 
-  setTimeout(function() {
-    requestAnimationFrame(frame);
-  
-    verticals.forEach(function(v,y){
-      
-      v.forEach(function(s,x){
-        if (WSYNC === 1 && x !== 0) {
-          return;
-        } else {
-          WSYNC = 0;
-        }
+  if (x % 3 === 0) {
+    // call a function from the stack every 3 clocks (aka 1 cycle)
+    var next = popStack();
 
-        // before draw we should check register for data
-        drawPixel(x, y, '696969');
-
-        if (x % 3 === 0) {
-          // call a function from the stack every 3 clock (aka 1 cycle)
-          var next = popStack();
-
-          WSYNC = (next === "WSYNC") ? 1 : 0;
-        }
-
-      });
-
-    });
-    
-  }, 1000 / fps);
+    WSYNC = (next === "WSYNC") ? 1 : 0;
+  }
 }
 
-frame();
+function oneScanline(line, y) { 
+  let lineLen = line.length;
+
+  for (let x=0;x<lineLen;x++) {
+    let pix = line[x];
+    onePixel(pix, x, y);
+  }
+}
+
+function beam() {
+  var vertLen = verticals.length;
+
+  for (let y=0;y<vertLen;y++) {
+    let line = verticals[y];
+    oneScanline(line, y);
+  }
+
+}
+
+// function frame() {
+
+//   setTimeout(function() {
+//     requestAnimationFrame(frame);
+//       beam();
+//   }, 1000 / fps);
+// }
+
+// frame();
+
+beam();
