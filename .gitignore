@@ -1,3 +1,6 @@
+.DS_Store
+thumbs.db
+
 # Logs
 logs
 *.log

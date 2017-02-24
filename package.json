@@ -1,0 +1,19 @@
+{
+  "name": "tia",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FranciscoG/tia.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FranciscoG/tia/issues"
+  },
+  "homepage": "https://github.com/FranciscoG/tia#readme"
+}
